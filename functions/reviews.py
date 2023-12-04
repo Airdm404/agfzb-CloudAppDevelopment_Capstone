@@ -63,6 +63,15 @@ def post_review():
         if field not in review_data:
             abort(400, description=f'Missing required field: {field}')
 
+
+    # Save the review data as a new document in the Cloudant database
+    print("review--------->", review_data)
+    # Ensure review_data is a dictionary
+    if not isinstance(review_data, dict):
+        review_data = json.loads(review_data)  # Parse string as JSON
+        if not isinstance(review_data, dict):
+            abort(400, description='Invalid JSON data')
+    
     # Save the review data as a new document in the Cloudant database
     db.create_document(review_data)
 

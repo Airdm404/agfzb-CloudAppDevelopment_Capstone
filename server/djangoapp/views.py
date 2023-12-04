@@ -10,6 +10,7 @@ from datetime import datetime
 import logging
 import json
 from .restapis import get_dealers_from_cf, get_dealer_by_id_from_cf, get_dealer_reviews_from_cf
+from .models import CarModel
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -140,4 +141,60 @@ def get_dealer_details(request, dealer_id):
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
 # ...
+
+def add_review(request, dealer_id):
+    context = {}
+    url = "https://edemahorlu-3000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+    dealer = get_dealer_by_id_from_cf(url, id=dealer_id)
+    context["dealer"] = dealer
+    if request.method == 'GET':
+        # Get cars for the dealer
+        cars = CarModel.objects.all()
+        print(cars)
+        context["cars"] = cars
+        
+        return render(request, 'djangoapp/add_review.html', context)
+    elif request.method == 'POST':
+        if request.user.is_authenticated:
+            username = request.user.username
+            print(request.POST)
+            payload = dict()
+            car_id = request.POST["car"]
+            car = CarModel.objects.get(pk=car_id)
+            payload["time"] = datetime.utcnow().isoformat()
+            payload["name"] = username
+            payload["dealership"] = dealer_id
+            payload["id"] = dealer_id
+            payload["review"] = request.POST["content"]
+            payload["purchase"] = False
+            if "purchasecheck" in request.POST:
+                if request.POST["purchasecheck"] == 'on':
+                    payload["purchase"] = True
+            payload["purchase_date"] = request.POST["purchasedate"]
+            payload["car_make"] = car.carmake.name
+            payload["car_model"] = car.name
+            payload["car_year"] = int(car.year.strftime("%Y"))
+
+            new_payload = {}
+            new_payload["review"] = payload
+            review_post_url = "https://edemahorlu-5000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
+
+            review = {
+                "id":dealer_id,
+                "time":datetime.utcnow().isoformat(),
+                "name":request.user.username,  # Assuming you want to use the authenticated user's name
+                "dealership" :dealer_id,                
+                "review": request.POST["content"],  # Extract the review from the POST request
+                "purchase": True,  # Extract purchase info from POST
+                "purchase_date":request.POST["purchasedate"],  # Extract purchase date from POST
+                "car_make": car.carmake.name,  # Extract car make from POST
+                "car_model": car.name,  # Extract car model from POST
+                "car_year": int(car.year.strftime("%Y")),  # Extract car year from POST
+            }
+            review=json.dumps(review,default=str)
+            new_payload1 = {}
+            new_payload1["review"] = review
+            print("\nREVIEW:",review)
+            post_request(review_post_url, review, id = dealer_id)
+        return redirect("djangoapp:dealer_details", id = dealer_id)
 
