@@ -90,30 +90,6 @@ def registration_request(request):
 
 
 # Update the `get_dealerships` view to render the index page with a list of dealerships
-
-# def get_dealerships(request):
-#     context = {}
-#     if request.method == "GET":
-#         url = "https://edemahorlu-3000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
-#         # Get dealers from the URL
-#         context['dealerships'] = get_dealers_from_cf(url)
-#         # Concat all dealer's short name
-#         # dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
-#         print(context['dealerships'])
-#         # Return a list of dealer short name
-#         return render(request, 'djangoapp/index.html', context)
-
-# def get_dealerships(request):
-#     if request.method == "GET":
-#         url = "https://edemahorlu-3000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
-#         # Get dealers from the URL
-#         dealerships = get_dealers_from_cf(url)
-#         # Concat all dealer's short name
-#         dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
-#         # Return a list of dealer short name
-#         return HttpResponse(dealer_names)
-
-
 def get_dealerships(request):
     if request.method == "GET":
         context = {}
@@ -171,7 +147,7 @@ def add_review(request, dealer_id):
                 if request.POST["purchasecheck"] == 'on':
                     payload["purchase"] = True
             payload["purchase_date"] = request.POST["purchasedate"]
-            payload["car_make"] = car.carmake.name
+            payload["car_make"] = car.car_make.name
             payload["car_model"] = car.name
             payload["car_year"] = int(car.year.strftime("%Y"))
 
@@ -187,7 +163,7 @@ def add_review(request, dealer_id):
                 "review": request.POST["content"],  # Extract the review from the POST request
                 "purchase": True,  # Extract purchase info from POST
                 "purchase_date":request.POST["purchasedate"],  # Extract purchase date from POST
-                "car_make": car.carmake.name,  # Extract car make from POST
+                "car_make": car.car_make.name,  # Extract car make from POST
                 "car_model": car.name,  # Extract car model from POST
                 "car_year": int(car.year.strftime("%Y")),  # Extract car year from POST
             }
