@@ -12,7 +12,6 @@ from ibm_watson.natural_language_understanding_v1 import Features,SentimentOptio
 
 # Create a `get_request` to make HTTP GET requests
 def get_request(url, **kwargs):
-    
     # If argument contain API KEY
     api_key = kwargs.get("api_key")
     print("GET from {} ".format(url))
