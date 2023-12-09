@@ -11,8 +11,6 @@ from ibm_watson import NaturalLanguageUnderstandingV1
 from ibm_watson.natural_language_understanding_v1 import Features,SentimentOptions
 
 # Create a `get_request` to make HTTP GET requests
-# e.g., response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
-#                                     auth=HTTPBasicAuth('apikey', api_key))
 def get_request(url, **kwargs):
     
     # If argument contain API KEY
@@ -43,17 +41,10 @@ def get_request(url, **kwargs):
 
 
 # Create a `post_request` to make HTTP POST requests
-# e.g., response = requests.post(url, params=kwargs, json=payload)
 def post_request(url, json_payload, **kwargs):
-    url =  "https://edemahorlu-5000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
+    url = "https://edemahorlu-5000.theiadocker-2-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
     response = requests.post(url, params=kwargs, json=json_payload)
     return response
-
-
-
-
-
-
 
 
 # Create a get_dealers_from_cf method to get dealers from a cloud function
@@ -116,9 +107,6 @@ def get_dealer_reviews_from_cf(url, **kwargs):
 
 
 # def get_dealer_by_id_from_cf(url, dealerId):
-# - Call get_request() with specified arguments
-# - Parse JSON results into a DealerView object list
-
 def get_dealer_by_id_from_cf(url, id):
     results = []
 
@@ -151,10 +139,6 @@ def get_dealer_by_id_from_cf(url, id):
 
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
-# def analyze_review_sentiments(text):
-# - Call get_request() with specified arguments
-# - Get the returned sentiment label such as Positive or Negative
-
 def analyze_review_sentiments(text):
     url = "https://api.us-east.natural-language-understanding.watson.cloud.ibm.com/instances/7a4ef951-dff5-4d57-abab-d88eb189a9ec"
     api_key = "WJ_ynlzSp1L52IxMxNYNVv97Oiyho-mpvFanZN9xuRSe"
@@ -164,8 +148,6 @@ def analyze_review_sentiments(text):
     response = natural_language_understanding.analyze( text=text+"hello hello hello",features=Features(sentiment=SentimentOptions(targets=[text+"hello hello hello"]))).get_result()
     label=json.dumps(response, indent=2)
     label = response['sentiment']['document']['label']
-    
-    
     return(label)
 
 

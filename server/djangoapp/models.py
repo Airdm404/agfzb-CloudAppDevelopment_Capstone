@@ -6,7 +6,7 @@ from django.utils.timezone import now
 
 # <HINT> Create a Car Make model `class CarMake(models.Model)`:
 class CarMake(models.Model):
-    name = models.CharField(null=False, max_length=30)
+    name = models.CharField(max_length=100)
     description = models.CharField(max_length=500)
 
     def __str__(self):
@@ -52,8 +52,8 @@ class CarModel(models.Model):
     ]
 
     car_make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
-    dealer_id = models.IntegerField(default=1,primary_key=True)
-    name = models.CharField(null=False, max_length=100, default='Car')
+    dealer_id = models.IntegerField(default=1)
+    name = models.CharField(max_length=100)
     car_type = models.CharField(
         null=False,
         max_length=20,
@@ -111,4 +111,6 @@ class DealerReview:
 
     def __str__(self):
         return "Dealer Review: " + self.review
-    
+
+    def to_json(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
